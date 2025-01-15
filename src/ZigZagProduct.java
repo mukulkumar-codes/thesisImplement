@@ -23,11 +23,14 @@ public class ZigZagProduct {
         System.out.println();
 
 
-//        Cycle graph to generate the cloud graphs with number of nodes equal to the degree of the original graph (cloud can provide manually)
+//        complete graph to generate the cloud graphs with number of nodes equal to the degree of the original graph (cloud can provide manually)
         int[][] cloud = new int[degree][degree];
         for (int i = 0; i < degree; i++) {
-            cloud[i][(i + 1) % degree] = 1;
-            cloud[(i + 1) % degree][i] = 1;
+            for (int j = 0; j < degree; j++) {
+                if (i != j){
+                    cloud[i][j] = 1;
+                }
+            }
         }
 
 
@@ -39,29 +42,20 @@ public class ZigZagProduct {
 
         for (int i = 0; i < nodes; i++) {
             for (int j = i; j < nodes; j++) {
-                if (graph[i][j] == 1) {
+                if (graph[i][j] == 1){
                     for (int k = 0; k < degree; k++) {
-                        if (rowSum[i * degree + k] != 1) {
-                            if (colSum[j * degree + k] == 1) {
-                                for (int l = degree - 1; l >= 0; l--) {
-                                    if (colSum[j * degree + l] != 1) {
-                                        cloudMap[i * degree + k][j * degree + l] = 1;
-                                        cloudMap[j * degree + l][i * degree + k] = 1;
-                                        rowSum[i * degree + k] = 1;
-                                        rowSum[j * degree + k] = 1;
-                                        colSum[i * degree + k] = 1;
-                                        colSum[j * degree + k] = 1;
-                                        break;
-                                    }
+                        if (rowSum[i * degree + k] == 0){
+                            for (int l = 0; l < degree; l++) {
+                                if (colSum[j * degree + l] == 0){
+                                    cloudMap[i * degree + k][j * degree + l] = 1;
+                                    cloudMap[j* degree + l][i * degree + k] = 1;
+                                    rowSum[i * degree + k] = 1;
+                                    colSum[i * degree + k] = 1;
+                                    rowSum[j * degree + l] = 1;
+                                    colSum[j * degree + l] = 1;
+                                    break;
                                 }
-                                break;
                             }
-                            cloudMap[i * degree + k][j * degree + k] = 1;
-                            cloudMap[j * degree + k][i * degree + k] = 1;
-                            rowSum[i * degree + k] = 1;
-                            rowSum[j * degree + k] = 1;
-                            colSum[i * degree + k] = 1;
-                            colSum[j * degree + k] = 1;
                             break;
                         }
                     }
@@ -75,7 +69,7 @@ public class ZigZagProduct {
 
         for (int i = 0; i < dimension; i++) {
             int primaryCloud = i / degree;
-            int primaryCloudNode = i % 3;
+            int primaryCloudNode = i % degree;
             for (int j = 0; j < degree; j++) {
                 if (cloud[primaryCloudNode][j] == 1) {
                     for (int k = 0; k < dimension; k++) {
@@ -96,24 +90,14 @@ public class ZigZagProduct {
         }
 
 
-//        This is the output of the cloudMap after replacing the cloud in the original graph
-        System.out.println("Cloud Mapping of the given graph: ");
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++) {
-                System.out.print(cloudMap[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-
-
 //        This is the output of the actual zigZag product of two graphs
         System.out.println("ZigZag product of the cloud and given graph: ");
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
-                System.out.print(zigZagProduct[i][j] + " ");
+                System.out.print(zigZagProduct[j][i] + " ");
             }
             System.out.println();
         }
+
     }
 }
